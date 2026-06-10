@@ -1,0 +1,16 @@
+{
+  "dogWeightKg": 7.5,
+  "mealsPerDay": 2,
+  "foods": [
+    {
+      "name": "Indyk",
+      "dosage": [
+        { "minKg": 0, "maxKg": 5, "minG": 150, "maxG": 370 },
+        { "minKg": 5, "maxKg": 10, "minG": 370, "maxG": 650 },
+        { "minKg": 10, "maxKg": 20, "minG": 650, "maxG": 1090 },
+        { "minKg": 20, "maxKg": 35, "minG": 1090, "maxG": 1640 },
+        { "minKg": 35, "maxKg": 60, "minG": 1640, "maxG": 2690 }
+      ]
+    }
+  ]
+}

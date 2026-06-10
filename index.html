@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miska — ile nałożyć psu</title>
+<style>
+  :root {
+    --bg: #faf6f0;
+    --card: #ffffff;
+    --accent: #b5651d;
+    --text: #2d2a26;
+    --muted: #8a8378;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+  }
+  main { width: 100%; max-width: 28rem; }
+  h1 { font-size: 1.4rem; margin: 0.5rem 0 1rem; }
+  .card {
+    background: var(--card);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  label { display: block; font-size: 0.9rem; color: var(--muted); margin-bottom: 0.3rem; }
+  select, input {
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 0.6rem;
+    border: 1px solid #ddd5c8;
+    border-radius: 0.5rem;
+    background: #fff;
+    margin-bottom: 1rem;
+  }
+  .result {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0.5rem 0;
+  }
+  .result small { font-size: 1.2rem; font-weight: 400; color: var(--muted); }
+  .sub { text-align: center; color: var(--muted); font-size: 0.9rem; margin: 0; }
+  details summary {
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--accent);
+    padding: 0.25rem 0;
+  }
+  details .card { margin-top: 0.75rem; box-shadow: none; border: 1px solid #eee5d8; }
+  .error { color: #b00020; text-align: center; }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🐕 Ile nałożyć do miski?</h1>
+
+  <div class="card">
+    <label for="food">Karma</label>
+    <select id="food"></select>
+    <p class="result" id="portion">—</p>
+    <p class="sub">na jeden posiłek (<span id="meals">2</span>× dziennie, pies <span id="dogWeight">?</span> kg)</p>
+  </div>
+
+  <details>
+    <summary>Mieszam dwie karmy</summary>
+    <div class="card">
+      <label for="givenFood">Już nałożyłem karmę</label>
+      <select id="givenFood"></select>
+      <label for="givenGrams">Ile gramów już jest w misce</label>
+      <input id="givenGrams" type="number" inputmode="numeric" min="0" placeholder="np. 50">
+      <p class="result" id="remaining">—</p>
+      <p class="sub" id="remainingLabel">dołóż karmy wybranej powyżej</p>
+    </div>
+  </details>
+
+  <footer>Dane karm: <code>foods.json</code> w repozytorium</footer>
+</main>
+
+<script>
+let config = null;
+
+function dailyDose(food, weightKg) {
+  const table = food.dosage;
+  const first = table[0];
+  const last = table[table.length - 1];
+  if (weightKg <= first.minKg) return first.minG;
+  if (weightKg >= last.maxKg) return last.maxG;
+  const bracket = table.find(b => weightKg >= b.minKg && weightKg <= b.maxKg);
+  const t = (weightKg - bracket.minKg) / (bracket.maxKg - bracket.minKg);
+  return bracket.minG + t * (bracket.maxG - bracket.minG);
+}
+
+function mealPortion(food) {
+  return dailyDose(food, config.dogWeightKg) / config.mealsPerDay;
+}
+
+function selectedFood(selectId) {
+  return config.foods[document.getElementById(selectId).value];
+}
+
+function update() {
+  const main = selectedFood('food');
+  const portion = mealPortion(main);
+  document.getElementById('portion').innerHTML =
+    Math.round(portion) + ' <small>g</small>';
+
+  const given = selectedFood('givenFood');
+  const givenGrams = parseFloat(document.getElementById('givenGrams').value);
+  const remainingEl = document.getElementById('remaining');
+  if (isNaN(givenGrams) || givenGrams < 0) {
+    remainingEl.textContent = '—';
+    return;
+  }
+  const coveredFraction = givenGrams / mealPortion(given);
+  const remaining = Math.max(0, (1 - coveredFraction) * portion);
+  remainingEl.innerHTML = Math.round(remaining) + ' <small>g</small>';
+  document.getElementById('remainingLabel').textContent =
+    coveredFraction >= 1
+      ? 'porcja już pokryta — nic nie dokładaj'
+      : 'dołóż karmy „' + main.name + '”';
+}
+
+function fillSelect(id, foods) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = foods
+    .map((f, i) => `<option value="${i}">${f.name}</option>`)
+    .join('');
+}
+
+async function init() {
+  try {
+    const res = await fetch('foods.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    config = await res.json();
+  } catch (e) {
+    document.querySelector('main').innerHTML =
+      '<p class="error">Nie udało się wczytać foods.json (' + e.message + ').<br>' +
+      'Lokalnie uruchom przez serwer, np. <code>python3 -m http.server</code>.</p>';
+    return;
+  }
+  document.getElementById('dogWeight').textContent = config.dogWeightKg;
+  document.getElementById('meals').textContent = config.mealsPerDay;
+  fillSelect('food', config.foods);
+  fillSelect('givenFood', config.foods);
+  document.getElementById('food').addEventListener('change', update);
+  document.getElementById('givenFood').addEventListener('change', update);
+  document.getElementById('givenGrams').addEventListener('input', update);
+  update();
+}
+
+init();
+</script>
+</body>
+</html>
