@@ -1,5 +1,5 @@
 {
-  "dogWeightKg": 7.5,
+  "dogWeightKg": 7.9,
   "mealsPerDay": 2,
   "foods": [
     {
@@ -10,6 +10,46 @@
         { "minKg": 10, "maxKg": 20, "minG": 650, "maxG": 1090 },
         { "minKg": 20, "maxKg": 35, "minG": 1090, "maxG": 1640 },
         { "minKg": 35, "maxKg": 60, "minG": 1640, "maxG": 2690 }
+      ]
+    },
+    {
+      "name": "Wołowina",
+      "dosage": [
+        { "minKg": 0, "maxKg": 5, "minG": 170, "maxG": 390 },
+        { "minKg": 5, "maxKg": 10, "minG": 390, "maxG": 670 },
+        { "minKg": 10, "maxKg": 20, "minG": 670, "maxG": 1110 },
+        { "minKg": 20, "maxKg": 35, "minG": 1110, "maxG": 1710 },
+        { "minKg": 35, "maxKg": 60, "minG": 1710, "maxG": 2790 }
+      ]
+    },
+    {
+      "name": "Dzik",
+      "dosage": [
+        { "minKg": 0, "maxKg": 5, "minG": 130, "maxG": 350 },
+        { "minKg": 5, "maxKg": 10, "minG": 350, "maxG": 620 },
+        { "minKg": 10, "maxKg": 20, "minG": 620, "maxG": 1030 },
+        { "minKg": 20, "maxKg": 35, "minG": 1030, "maxG": 1540 },
+        { "minKg": 35, "maxKg": 60, "minG": 1540, "maxG": 2450 }
+      ]
+    },
+    {
+      "name": "Daniel",
+      "dosage": [
+        { "minKg": 0, "maxKg": 5, "minG": 140, "maxG": 350 },
+        { "minKg": 5, "maxKg": 10, "minG": 350, "maxG": 630 },
+        { "minKg": 10, "maxKg": 20, "minG": 630, "maxG": 1050 },
+        { "minKg": 20, "maxKg": 35, "minG": 1050, "maxG": 1580 },
+        { "minKg": 35, "maxKg": 60, "minG": 1580, "maxG": 2590 }
+      ]
+    },
+    {
+      "name": "Wieprzowina",
+      "dosage": [
+        { "minKg": 0, "maxKg": 5, "minG": 130, "maxG": 350 },
+        { "minKg": 5, "maxKg": 10, "minG": 350, "maxG": 620 },
+        { "minKg": 10, "maxKg": 20, "minG": 620, "maxG": 1030 },
+        { "minKg": 20, "maxKg": 35, "minG": 1030, "maxG": 1540 },
+        { "minKg": 35, "maxKg": 60, "minG": 1540, "maxG": 2450 }
       ]
     }
   ]

@@ -23,72 +23,110 @@
     padding: 1rem;
   }
   main { width: 100%; max-width: 28rem; }
-  h1 { font-size: 1.4rem; margin: 0.5rem 0 1rem; }
-  .card {
-    background: var(--card);
-    border-radius: 1rem;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  }
-  label { display: block; font-size: 0.9rem; color: var(--muted); margin-bottom: 0.3rem; }
-  select, input {
+  h1 { font-size: 1.3rem; margin: 0.5rem 0 1rem; }
+  h2 { font-size: 1.1rem; margin: 1.25rem 0 0.75rem; color: var(--muted); font-weight: 500; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .food-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
     width: 100%;
-    font-size: 1.2rem;
-    padding: 0.6rem;
+    background: var(--card);
+    border: 1px solid #eee5d8;
+    border-radius: 1rem;
+    padding: 1.25rem 1.25rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    text-align: left;
+  }
+  .food-btn:active { background: #f3ead9; }
+  .food-btn .grams { color: var(--accent); white-space: nowrap; }
+  .food-btn .grams small { font-size: 1rem; font-weight: 400; color: var(--muted); }
+  input {
+    width: 100%;
+    font-size: 1.8rem;
+    padding: 0.75rem;
     border: 1px solid #ddd5c8;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     background: #fff;
+    text-align: center;
+  }
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+  }
+  .context {
+    background: #f3ead9;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
     margin-bottom: 1rem;
   }
   .result {
     text-align: center;
-    font-size: 3rem;
+    font-size: 4rem;
     font-weight: 700;
     color: var(--accent);
-    margin: 0.5rem 0;
+    margin: 1.5rem 0 0.5rem;
   }
-  .result small { font-size: 1.2rem; font-weight: 400; color: var(--muted); }
-  .sub { text-align: center; color: var(--muted); font-size: 0.9rem; margin: 0; }
-  details summary {
+  .result small { font-size: 1.5rem; font-weight: 400; color: var(--muted); }
+  .sub { text-align: center; color: var(--muted); font-size: 1.1rem; margin: 0 0 2rem; }
+  .restart-btn {
+    display: block;
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem;
+    font-size: 1.2rem;
     cursor: pointer;
-    font-size: 1rem;
-    color: var(--accent);
-    padding: 0.25rem 0;
   }
-  details .card { margin-top: 0.75rem; box-shadow: none; border: 1px solid #eee5d8; }
   .error { color: #b00020; text-align: center; }
-  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 1rem; }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 1.5rem; }
 </style>
 </head>
 <body>
 <main>
-  <h1>🐕 Ile nałożyć do miski?</h1>
+  <!-- Screen 1: food list -->
+  <section id="screen-list" class="screen active">
+    <h1>🐕 Co dajesz do miski?</h1>
+    <div id="foodList"></div>
+    <footer>porcje na 1 posiłek · pies <span id="dogWeight">?</span> kg · dane: <code>foods.json</code></footer>
+  </section>
 
-  <div class="card">
-    <label for="food">Karma</label>
-    <select id="food"></select>
-    <p class="result" id="portion">—</p>
-    <p class="sub">na jeden posiłek (<span id="meals">2</span>× dziennie, pies <span id="dogWeight">?</span> kg)</p>
-  </div>
+  <!-- Screen 2: how much already given + second food -->
+  <section id="screen-mix" class="screen">
+    <button class="back-btn" id="backToList">← wróć</button>
+    <div class="context" id="mixContext"></div>
+    <h2>Ile gramów nałożyłeś?</h2>
+    <input id="givenGrams" type="number" inputmode="numeric" min="0" placeholder="0">
+    <h2>Którą puszkę teraz nakładasz?</h2>
+    <div id="secondFoodList"></div>
+  </section>
 
-  <details>
-    <summary>Mieszam dwie karmy</summary>
-    <div class="card">
-      <label for="givenFood">Już nałożyłem karmę</label>
-      <select id="givenFood"></select>
-      <label for="givenGrams">Ile gramów już jest w misce</label>
-      <input id="givenGrams" type="number" inputmode="numeric" min="0" placeholder="np. 50">
-      <p class="result" id="remaining">—</p>
-      <p class="sub" id="remainingLabel">dołóż karmy wybranej powyżej</p>
-    </div>
-  </details>
-
-  <footer>Dane karm: <code>foods.json</code> w repozytorium</footer>
+  <!-- Screen 3: result -->
+  <section id="screen-result" class="screen">
+    <div class="context" id="resultContext"></div>
+    <p class="result" id="resultGrams"></p>
+    <p class="sub" id="resultLabel"></p>
+    <button class="restart-btn" id="restart">Od początku</button>
+  </section>
 </main>
 
 <script>
 let config = null;
+let firstFood = null;
 
 function dailyDose(food, weightKg) {
   const table = food.dosage;
@@ -105,37 +143,61 @@ function mealPortion(food) {
   return dailyDose(food, config.dogWeightKg) / config.mealsPerDay;
 }
 
-function selectedFood(selectId) {
-  return config.foods[document.getElementById(selectId).value];
+function show(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
 }
 
-function update() {
-  const main = selectedFood('food');
-  const portion = mealPortion(main);
-  document.getElementById('portion').innerHTML =
-    Math.round(portion) + ' <small>g</small>';
+function foodButton(food, onClick) {
+  const btn = document.createElement('button');
+  btn.className = 'food-btn';
+  btn.innerHTML = `<span>${food.name}</span>` +
+    `<span class="grams">${Math.round(mealPortion(food))} <small>g</small></span>`;
+  btn.addEventListener('click', onClick);
+  return btn;
+}
 
-  const given = selectedFood('givenFood');
-  const givenGrams = parseFloat(document.getElementById('givenGrams').value);
-  const remainingEl = document.getElementById('remaining');
-  if (isNaN(givenGrams) || givenGrams < 0) {
-    remainingEl.textContent = '—';
-    return;
+function remainingGrams(secondFood) {
+  const given = parseFloat(document.getElementById('givenGrams').value) || 0;
+  const coveredFraction = given / mealPortion(firstFood);
+  return Math.max(0, (1 - coveredFraction) * mealPortion(secondFood));
+}
+
+function updateSecondList() {
+  document.querySelectorAll('#secondFoodList .food-btn').forEach((btn, i) => {
+    const food = config.foods[i];
+    btn.querySelector('.grams').innerHTML =
+      Math.round(remainingGrams(food)) + ' <small>g</small>';
+  });
+}
+
+function openMixScreen(food) {
+  firstFood = food;
+  document.getElementById('mixContext').textContent =
+    `W misce: ${food.name} (pełna porcja: ${Math.round(mealPortion(food))} g)`;
+  document.getElementById('givenGrams').value = '';
+  updateSecondList();
+  show('screen-mix');
+  document.getElementById('givenGrams').focus();
+}
+
+function showResult(secondFood) {
+  const given = parseFloat(document.getElementById('givenGrams').value) || 0;
+  const coveredFraction = given / mealPortion(firstFood);
+  const remaining = remainingGrams(secondFood);
+  document.getElementById('resultContext').textContent =
+    `${given} g „${firstFood.name}” + „${secondFood.name}”`;
+  if (coveredFraction >= 1) {
+    document.getElementById('resultGrams').textContent = '0';
+    document.getElementById('resultLabel').textContent =
+      'porcja już pokryta — nic nie dokładaj';
+  } else {
+    document.getElementById('resultGrams').innerHTML =
+      Math.round(remaining) + ' <small>g</small>';
+    document.getElementById('resultLabel').textContent =
+      `tyle dołóż karmy „${secondFood.name}”`;
   }
-  const coveredFraction = givenGrams / mealPortion(given);
-  const remaining = Math.max(0, (1 - coveredFraction) * portion);
-  remainingEl.innerHTML = Math.round(remaining) + ' <small>g</small>';
-  document.getElementById('remainingLabel').textContent =
-    coveredFraction >= 1
-      ? 'porcja już pokryta — nic nie dokładaj'
-      : 'dołóż karmy „' + main.name + '”';
-}
-
-function fillSelect(id, foods) {
-  const sel = document.getElementById(id);
-  sel.innerHTML = foods
-    .map((f, i) => `<option value="${i}">${f.name}</option>`)
-    .join('');
+  show('screen-result');
 }
 
 async function init() {
@@ -150,13 +212,15 @@ async function init() {
     return;
   }
   document.getElementById('dogWeight').textContent = config.dogWeightKg;
-  document.getElementById('meals').textContent = config.mealsPerDay;
-  fillSelect('food', config.foods);
-  fillSelect('givenFood', config.foods);
-  document.getElementById('food').addEventListener('change', update);
-  document.getElementById('givenFood').addEventListener('change', update);
-  document.getElementById('givenGrams').addEventListener('input', update);
-  update();
+  const list = document.getElementById('foodList');
+  const secondList = document.getElementById('secondFoodList');
+  for (const food of config.foods) {
+    list.appendChild(foodButton(food, () => openMixScreen(food)));
+    secondList.appendChild(foodButton(food, () => showResult(food)));
+  }
+  document.getElementById('givenGrams').addEventListener('input', updateSecondList);
+  document.getElementById('backToList').addEventListener('click', () => show('screen-list'));
+  document.getElementById('restart').addEventListener('click', () => show('screen-list'));
 }
 
 init();
