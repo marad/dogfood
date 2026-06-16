@@ -20,7 +20,8 @@ Transcribe the table into a new entry in `foods.json`.
 ## Data model
 
 - `dogWeightKg` in `foods.json` is the single source of the dog's weight
-  (7.9 kg as of June 2026) — update only this field when the weight changes.
+  (7.0 kg target as of June 2026; actual was 7.7 kg — feeding for the diet
+  target weight, not current) — update only this field when the weight changes.
 - `mealsPerDay: 2` — the app shows per-meal portions (daily dose / 2).
 - Daily dose = linear interpolation of weight within its bracket; weights
   outside the table are clamped to the nearest edge.
