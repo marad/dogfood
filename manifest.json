@@ -1,0 +1,13 @@
+{
+  "name": "Kalkulator porcji",
+  "short_name": "Porcje",
+  "description": "Kalkulator porcji jedzenia dla psa",
+  "start_url": "/dogfood/",
+  "display": "standalone",
+  "background_color": "#fff7ed",
+  "theme_color": "#c8843a",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
