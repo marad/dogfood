@@ -1,4 +1,4 @@
-const CACHE = 'dogfood-v1';
+const CACHE = 'dogfood-v2';
 const ASSETS = ['./', './foods.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e =>
