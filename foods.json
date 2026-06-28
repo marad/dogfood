@@ -43,6 +43,16 @@
       ]
     },
     {
+      "name": "Jagnięcina",
+      "dosage": [
+        { "minKg": 0, "maxKg": 5, "minG": 120, "maxG": 320 },
+        { "minKg": 5, "maxKg": 10, "minG": 320, "maxG": 580 },
+        { "minKg": 10, "maxKg": 20, "minG": 580, "maxG": 980 },
+        { "minKg": 20, "maxKg": 35, "minG": 980, "maxG": 1420 },
+        { "minKg": 35, "maxKg": 60, "minG": 1420, "maxG": 2290 }
+      ]
+    },
+    {
       "name": "Wieprzowina",
       "dosage": [
         { "minKg": 0, "maxKg": 5, "minG": 130, "maxG": 350 },
