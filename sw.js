@@ -1,5 +1,5 @@
 const CACHE = 'dogfood-v3';
-const ASSETS = ['./', './foods.json', './icon-192.png', './icon-512.png'];
+const ASSETS = ['./', './foods.json', './icon-192-v2.png', './icon-512-v2.png'];
 
 // Take over immediately so an update lands on the next page load,
 // not after every tab is closed.
