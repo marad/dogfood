@@ -34,6 +34,17 @@ Transcribe the table into a new entry in `foods.json`.
 - Local testing needs an HTTP server (`python3 -m http.server`) because the
   page fetches `foods.json` — opening the file directly fails.
 
+## PWA (manifest.json, sw.js, icons)
+
+- The service worker is network-first: fresh content whenever online, cache
+  only as an offline fallback. No need to bump `CACHE` on every deploy —
+  `activate` deletes stale caches.
+- Changing an icon means **renaming the file** (`icon-192-v2.png` → `-v3`)
+  and updating `manifest.json`, `sw.js` and the `apple-touch-icon` in
+  `index.html`. The installed Android WebAPK bakes the icon in; Chrome only
+  rebuilds it when the manifest changes, and it can take up to a day.
+  Removing and re-adding the home screen shortcut is the instant fix.
+
 ## qr.png
 
 Printed and hanging on the user's fridge. If the URL ever changes, the QR
