@@ -105,7 +105,7 @@
   <section id="screen-list" class="screen active">
     <h1>🐕 Co dajesz do miski?</h1>
     <div id="foodList"></div>
-    <footer>porcje na 1 posiłek · pies <span id="dogWeight">?</span> kg · dane: <code>foods.json</code></footer>
+    <footer>porcje na 1 posiłek · <span id="dailyKcal">?</span> kcal/dzień · dane: <code>foods.json</code></footer>
   </section>
 
   <!-- Screen 2: how much already given + second food -->
@@ -131,19 +131,24 @@
 let config = null;
 let firstFood = null;
 
-function dailyDose(food, weightKg) {
-  const table = food.dosage;
-  const first = table[0];
-  const last = table[table.length - 1];
-  if (weightKg <= first.minKg) return first.minG;
-  if (weightKg >= last.maxKg) return last.maxG;
-  const bracket = table.find(b => weightKg >= b.minKg && weightKg <= b.maxKg);
-  const t = (weightKg - bracket.minKg) / (bracket.maxKg - bracket.minKg);
-  return bracket.minG + t * (bracket.maxG - bracket.minG);
+function mealKcal() {
+  return config.dailyKcal / config.mealsPerDay;
+}
+
+function gramsForKcal(food, kcal) {
+  return kcal / food.kcalPer100g * 100;
+}
+
+function kcalOfGrams(food, grams) {
+  return grams * food.kcalPer100g / 100;
 }
 
 function mealPortion(food) {
-  return dailyDose(food, config.dogWeightKg) / config.mealsPerDay;
+  return gramsForKcal(food, mealKcal());
+}
+
+function activeFoods() {
+  return config.foods.filter(f => f.kcalPer100g > 0);
 }
 
 function show(screenId) {
@@ -162,13 +167,13 @@ function foodButton(food, onClick) {
 
 function remainingGrams(secondFood) {
   const given = parseFloat(document.getElementById('givenGrams').value) || 0;
-  const coveredFraction = given / mealPortion(firstFood);
-  return Math.max(0, (1 - coveredFraction) * mealPortion(secondFood));
+  const remainingKcal = mealKcal() - kcalOfGrams(firstFood, given);
+  return Math.max(0, gramsForKcal(secondFood, remainingKcal));
 }
 
 function updateSecondList() {
   document.querySelectorAll('#secondFoodList .food-btn').forEach((btn, i) => {
-    const food = config.foods[i];
+    const food = activeFoods()[i];
     btn.querySelector('.grams').innerHTML =
       Math.round(remainingGrams(food)) + ' <small>g</small>';
   });
@@ -186,7 +191,7 @@ function openMixScreen(food) {
 
 function showResult(secondFood) {
   const given = parseFloat(document.getElementById('givenGrams').value) || 0;
-  const coveredFraction = given / mealPortion(firstFood);
+  const coveredFraction = kcalOfGrams(firstFood, given) / mealKcal();
   const remaining = remainingGrams(secondFood);
   document.getElementById('resultContext').textContent =
     `${given} g „${firstFood.name}” + „${secondFood.name}”`;
@@ -214,10 +219,10 @@ async function init() {
       'Lokalnie uruchom przez serwer, np. <code>python3 -m http.server</code>.</p>';
     return;
   }
-  document.getElementById('dogWeight').textContent = config.dogWeightKg;
+  document.getElementById('dailyKcal').textContent = config.dailyKcal;
   const list = document.getElementById('foodList');
   const secondList = document.getElementById('secondFoodList');
-  for (const food of config.foods) {
+  for (const food of activeFoods()) {
     list.appendChild(foodButton(food, () => openMixScreen(food)));
     secondList.appendChild(foodButton(food, () => showResult(food)));
   }
