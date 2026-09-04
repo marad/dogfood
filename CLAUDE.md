@@ -12,11 +12,11 @@ Add `{ "name": ..., "kcalPer100g": ... }` to `foods` in `foods.json`.
 - An entry without `kcalPer100g` is kept in the file but hidden in the app
   until the value is filled in.
 - After adding, sanity-check the per-meal portion (other cans land around
-  110–160 g at 270 kcal/day).
+  110–165 g at 275 kcal/day).
 
 ## Data model
 
-- `dailyKcal` in `foods.json` is the daily energy target (270 kcal as of
+- `dailyKcal` in `foods.json` is the daily energy target (275 kcal as of
   September 2026, a diet target) — update only this field when it changes.
 - `mealsPerDay: 2` — the app shows per-meal portions (daily kcal / 2).
 - Portion in grams = meal kcal / `kcalPer100g` × 100.
